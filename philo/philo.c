@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-void    parse_args(int ac, char **av, t_rules *rules)
+int    parse_args(int ac, char **av, t_rules *rules)
 {
     if (ac != 5 && ac != 6)
     {
@@ -38,6 +38,19 @@ void    parse_args(int ac, char **av, t_rules *rules)
     return 1;
 }
 
+static void setup_philo(t_rules *rules, int i)
+{
+    rules->philos[i].id = i + 1;
+	rules->philos[i].meals_eaten = 0;
+	rules->philos[i].last_meal = 0;
+	rules->philos[i].rules = rules;
+	rules->philos[i].left_fork = &rules->forks[i];
+	if (i == rules->nb_philo - 1)
+		rules->philos[i].right_fork = &rules->forks[0];
+	else
+		rules->philos[i].right_fork = &rules->forks[i + 1];
+}
+
 int init_philo(t_rules *rules)
 {
     int i;
@@ -52,10 +65,55 @@ int init_philo(t_rules *rules)
         }
         i++;
     }
+    if (pthread_mutex_init(&rules->print_mutex, NULL) != 0)
+    {
+        printf("Error initializing print mutex\n");
+        return (0);
+    }
     i = 0;
+    while (i < rules->nb_philo)
+    {
+        setup_philo(rules, i);
+        i++;
+    }
+    return 1;
 }
 
-int main(int ac, char **av, t_rules *rules)
+int	main(int argc, char **argv)
 {
+	t_rules	rules;
 
+	(void)argc;
+	(void)argv;
+
+	// Hardcodeamos los valores para probar
+	rules.nb_philo = 5;
+	rules.time_to_die = 800;
+	rules.time_to_eat = 200;
+	rules.time_to_sleep = 200;
+	rules.must_eat = -1;
+
+	if (!init_memory(&rules))
+		return (1);
+	if (!init_philo(&rules))
+	{
+		free_memory(&rules);
+		return (1);
+	}
+
+	// Probar salida
+	printf("Initialized %d philosophers:\n", rules.nb_philo);
+	int i = 0;
+	while (i < rules.nb_philo)
+	{
+		printf("Philo %d: left fork [%p], right fork [%p]\n",
+			rules.philos[i].id,
+			(void *)rules.philos[i].left_fork,
+			(void *)rules.philos[i].right_fork);
+		i++;
+	}
+
+	// Liberar recursos
+	free_memory(&rules);
+	return (0);
 }

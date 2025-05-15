@@ -63,7 +63,7 @@ int	ft_isdigit(int c)
 	}
 }
 
-int is_digit_str(char *s)
+int is_digit_str(const char *s)
 {
     if(!s || *s == '\0')
         return 0;
@@ -92,4 +92,21 @@ int init_memory(t_rules *rules)
         return 0;
     }
     return 1;
+}
+
+void    free_memory(t_rules *rules)
+{
+    int i;
+
+    i = 0;
+    while (i < rules->nb_philo)
+    {
+        pthread_mutex_destroy(&rules->forks[i]);
+        i++;
+    }
+    pthread_mutex_destroy(&rules->print_mutex);
+    free(rules->forks);
+    rules->forks = NULL;
+    free(rules->philos);
+    rules->philos = NULL;
 }

@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <string.h>
+#include <stdlib.h>
 
 typedef struct s_rules t_rules;
 
@@ -47,9 +48,11 @@ struct s_rules
 
 long	ft_atol(const char *str);
 int	    ft_isdigit(int c);
-int     is_digit_str(char *s);
+int     is_digit_str(const char *s);
 int     safe_atol(const char *s, int *out);
 int     init_memory(t_rules *rules);
-
+void    free_memory(t_rules *rules);
+int     init_philo(t_rules *rules);
+int     parse_args(int ac, char **av, t_rules *rules);
 
 #endif
