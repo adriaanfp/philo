@@ -19,33 +19,37 @@
 #include <pthread.h>
 #include <string.h>
 
-typedef struct s_rules
-{
-    int nb_philo;
-    int time_to_die;
-    int time_to_eat;
-    int time_to_sleep;
-    int must_eat;
-    long start_time;
-    pthread_mutex_t *forks;
-    pthread_mutex_t print_mutex;
-}   t_rules;
+typedef struct s_rules t_rules;
 
 typedef struct s_philo
 {
-    int id;
-    int meals_eaten;
-    long    last_meal;
-    pthread_t thread_id;
-    pthread_mutex_t *left_fork;
-    pthread_mutex_t *right_fork;
-    t_rules *rules;
-}   t_philo;
+	int				id;
+	int				meals_eaten;
+	long			last_meal;
+	pthread_t		thread_id;
+	pthread_mutex_t	*left_fork;
+	pthread_mutex_t	*right_fork;
+	t_rules			*rules;
+}	t_philo;
+
+struct s_rules
+{
+	int				nb_philo;
+	int				time_to_die;
+	int				time_to_eat;
+	int				time_to_sleep;
+	int				must_eat;
+	long			start_time;
+	pthread_mutex_t	*forks;
+	pthread_mutex_t	print_mutex;
+	t_philo			*philos;
+};
 
 long	ft_atol(const char *str);
 int	    ft_isdigit(int c);
 int     is_digit_str(char *s);
 int     safe_atol(const char *s, int *out);
+int     init_memory(t_rules *rules);
 
 
 #endif

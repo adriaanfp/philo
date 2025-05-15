@@ -75,3 +75,21 @@ int is_digit_str(char *s)
     }
     return 1;
 }
+
+int init_memory(t_rules *rules)
+{
+    rules->forks = malloc(sizeof(pthread_mutex_t) * rules->nb_philo);
+    if (!rules->forks)
+    {
+        printf("Error allocating forks\n");
+        return 0;
+    }
+    rules->philos = malloc(sizeof(t_philo) * rules->nb_philo);
+    if (!rules->philos)
+    {
+        printf("Error allocating philosophers\n");
+        free(rules->forks);
+        return 0;
+    }
+    return 1;
+}
