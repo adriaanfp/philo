@@ -12,6 +12,12 @@
 
 #ifndef PHILO_H
 # define PHILO_H
+# define INTMIN -2147483648
+# define INTMAX 2147483647
+
+#include <stdio.h>
+#include <pthread.h>
+#include <string.h>
 
 typedef struct s_rules
 {
@@ -32,10 +38,14 @@ typedef struct s_philo
     long    last_meal;
     pthread_t thread_id;
     pthread_mutex_t *left_fork;
-    pthread_mutex_t *rigth_fork;
+    pthread_mutex_t *right_fork;
     t_rules *rules;
 }   t_philo;
 
+long	ft_atol(const char *str);
+int	    ft_isdigit(int c);
+int     is_digit_str(char *s);
+int     safe_atol(const char *s, int *out);
 
 
 #endif
