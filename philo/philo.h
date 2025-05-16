@@ -19,6 +19,7 @@
 #include <pthread.h>
 #include <string.h>
 #include <stdlib.h>
+#include <sys/time.h>
 
 typedef struct s_rules t_rules;
 
@@ -54,5 +55,7 @@ int     init_memory(t_rules *rules);
 void    free_memory(t_rules *rules);
 int     init_philo(t_rules *rules);
 int     parse_args(int ac, char **av, t_rules *rules);
+long	get_time(void);
+int		start_threads(t_rules * rules);
 
 #endif

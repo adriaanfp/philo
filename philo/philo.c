@@ -100,19 +100,19 @@ int	main(int argc, char **argv)
 		free_memory(&rules);
 		return (1);
 	}
-
+    if (!start_threads(&rules))
+    {
+	free_memory(&rules);
+	return (1);
+    }
 	// Probar salida
 	printf("Initialized %d philosophers:\n", rules.nb_philo);
 	int i = 0;
 	while (i < rules.nb_philo)
 	{
-		printf("Philo %d: left fork [%p], right fork [%p]\n",
-			rules.philos[i].id,
-			(void *)rules.philos[i].left_fork,
-			(void *)rules.philos[i].right_fork);
-		i++;
+		pthread_join(rules.philos[i].thread_id, NULL);
+        i++;
 	}
-
 	// Liberar recursos
 	free_memory(&rules);
 	return (0);

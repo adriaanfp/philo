@@ -110,3 +110,39 @@ void    free_memory(t_rules *rules)
     free(rules->philos);
     rules->philos = NULL;
 }
+
+long	get_time(void)
+{
+	struct timeval	tv;
+	long			time_in_ms;
+
+	gettimeofday(&tv, NULL);
+	time_in_ms = tv.tv_sec * 1000 + tv.tv_usec / 1000;
+	return (time_in_ms);
+}
+
+void    *routine(void *arg)
+{
+    t_philo *philo = (void *)arg;
+
+    printf("Philosopher %d is alive!\n", philo->id);
+    return NULL;
+}
+
+int start_threads(t_rules * rules)
+{
+    int i;
+
+    i = 0;
+    rules->start_time = get_time();
+    while (i < rules->nb_philo)
+    {
+        if (pthread_create(&rules->philos[i].thread_id, NULL, routine, &rules->philos[i]) != 0)
+        {
+            printf("Error creating thread for philosopher %d\n", i + 1);
+            return 0;
+        }
+        i++;
+    }
+    return 1;
+}
