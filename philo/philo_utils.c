@@ -124,8 +124,21 @@ long	get_time(void)
 void    *routine(void *arg)
 {
     t_philo *philo = (void *)arg;
-
-    printf("Philosopher %d is alive!\n", philo->id);
+    while (1)
+    {
+        printf("Philosopher %d is thinking\n", philo->id);
+        usleep(1000);
+        pthread_mutex_lock(philo->left_fork);
+        pthread_mutex_lock(philo->right_fork);
+        printf("Philosophers %d is eating\n", philo->id);
+        philo->last_meal == get_time();
+        philo->meals_eaten++;
+        usleep(philo->rules->time_to_eat * 1000);
+        pthread_mutex_unlock(philo->left_fork);
+        pthread_mutex_unlock(philo->right_fork);
+        printf("Philosopher %d is sleepin\n", philo->id);
+        usleep(philo->rules->time_to_sleep * 1000);
+    }
     return NULL;
 }
 
