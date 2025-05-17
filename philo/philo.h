@@ -42,6 +42,7 @@ struct s_rules
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				must_eat;
+	int				someone_died;
 	long			start_time;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	print_mutex;

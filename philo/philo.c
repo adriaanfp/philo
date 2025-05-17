@@ -55,6 +55,7 @@ int init_philo(t_rules *rules)
 {
     int i;
 
+    rules->someone_died = 0;
     i = 0;
     while (i < rules->nb_philo)
     {

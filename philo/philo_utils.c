@@ -130,7 +130,7 @@ void    *routine(void *arg)
         usleep(1000);
         pthread_mutex_lock(philo->left_fork);
         pthread_mutex_lock(philo->right_fork);
-        printf("Philosophers %d is eating\n", philo->id);
+        printf("Philosopher %d is eating\n", philo->id);
         philo->last_meal == get_time();
         philo->meals_eaten++;
         usleep(philo->rules->time_to_eat * 1000);
