@@ -94,7 +94,7 @@ int init_memory(t_rules *rules)
     return 1;
 }
 
-void    free_memory(t_rules *rules)
+void free_memory(t_rules *rules)
 {
     int i;
 
@@ -102,9 +102,11 @@ void    free_memory(t_rules *rules)
     while (i < rules->nb_philo)
     {
         pthread_mutex_destroy(&rules->forks[i]);
+        pthread_mutex_destroy(&rules->philos[i].meal_mutex);
         i++;
     }
     pthread_mutex_destroy(&rules->print_mutex);
+    pthread_mutex_destroy(&rules->full_mutex);
     free(rules->forks);
     rules->forks = NULL;
     free(rules->philos);
