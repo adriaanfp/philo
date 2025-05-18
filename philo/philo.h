@@ -28,6 +28,7 @@ typedef struct s_philo
 {
 	int				id;
 	int				meals_eaten;
+	int 			has_finished;
 	long			last_meal;
 	pthread_t		thread_id;
 	pthread_mutex_t	*left_fork;
@@ -44,9 +45,11 @@ struct s_rules
 	int				time_to_sleep;
 	int				must_eat;
 	int				someone_died;
+	int				full_philos;
 	long			start_time;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	print_mutex;
+	pthread_mutex_t full_mutex;
 	t_philo			*philos;
 };
 

@@ -129,7 +129,6 @@ void *routine(void *arg)
     {
         printf("Philosopher %d is thinking\n", philo->id);
         usleep(1000);
-
         if (philo->id % 2 == 0)
         {
             pthread_mutex_lock(philo->right_fork);
@@ -140,19 +139,21 @@ void *routine(void *arg)
             pthread_mutex_lock(philo->left_fork);
             pthread_mutex_lock(philo->right_fork);
         }
-
         printf("Philosopher %d is eating\n", philo->id);
-
         pthread_mutex_lock(&philo->meal_mutex);
         philo->last_meal = get_time();
         philo->meals_eaten++;
+        if (!philo->has_finished && philo->rules->must_eat != -1 && philo->meals_eaten == philo->rules->must_eat)
+        {
+            philo->has_finished = 1;
+            pthread_mutex_lock(&philo->rules->full_mutex);
+            philo->rules->full_philos++;
+            pthread_mutex_unlock(&philo->rules->full_mutex);
+        }
         pthread_mutex_unlock(&philo->meal_mutex);
-
         usleep(philo->rules->time_to_eat * 1000);
-
         pthread_mutex_unlock(philo->left_fork);
         pthread_mutex_unlock(philo->right_fork);
-
         printf("Philosopher %d is sleepin\n", philo->id);
         usleep(philo->rules->time_to_sleep * 1000);
     }
@@ -177,7 +178,7 @@ int start_threads(t_rules * rules)
     return 1;
 }
 
-void    *death_monitor(void *arg)
+void *death_monitor(void *arg)
 {
     t_rules *rules = (t_rules *)arg;
     int i;
@@ -195,13 +196,20 @@ void    *death_monitor(void *arg)
                 rules->someone_died = 1;
                 pthread_mutex_unlock(&rules->philos[i].meal_mutex);
                 pthread_mutex_lock(&rules->print_mutex);
-                printf("%ld %d died\n", now -rules->start_time, rules->philos[i].id);
+                printf("%ld %d died\n", now - rules->start_time, rules->philos[i].id);
                 pthread_mutex_unlock(&rules->print_mutex);
                 return NULL;
             }
             pthread_mutex_unlock(&rules->philos[i].meal_mutex);
             i++;
         }
+        pthread_mutex_lock(&rules->full_mutex);
+        if (rules->must_eat != -1 && rules->full_philos >= rules->nb_philo)
+        {
+            pthread_mutex_unlock(&rules->full_mutex);
+            return NULL;
+        }
+        pthread_mutex_unlock(&rules->full_mutex);
         usleep(1000);
     }
     return NULL;

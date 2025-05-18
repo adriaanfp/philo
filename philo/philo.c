@@ -42,6 +42,7 @@ static void setup_philo(t_rules *rules, int i)
 {
     rules->philos[i].id = i + 1;
 	rules->philos[i].meals_eaten = 0;
+    rules->philos[i].has_finished = 0;
 	rules->philos[i].last_meal = rules->start_time;
 	rules->philos[i].rules = rules;
 	rules->philos[i].left_fork = &rules->forks[i];
@@ -56,6 +57,8 @@ int init_philo(t_rules *rules)
     int i;
 
     rules->someone_died = 0;
+    rules->full_philos = 0;
+    pthread_mutex_init(&rules->full_mutex, NULL);
     rules->start_time = get_time();
     i = 0;
     while (i < rules->nb_philo)
