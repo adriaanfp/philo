@@ -32,6 +32,7 @@ typedef struct s_philo
 	pthread_t		thread_id;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
+	pthread_mutex_t meal_mutex;
 	t_rules			*rules;
 }	t_philo;
 
@@ -59,5 +60,6 @@ int     init_philo(t_rules *rules);
 int     parse_args(int ac, char **av, t_rules *rules);
 long	get_time(void);
 int		start_threads(t_rules * rules);
+void    *death_monitor(void *arg);
 
 #endif

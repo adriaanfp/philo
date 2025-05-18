@@ -42,7 +42,7 @@ static void setup_philo(t_rules *rules, int i)
 {
     rules->philos[i].id = i + 1;
 	rules->philos[i].meals_eaten = 0;
-	rules->philos[i].last_meal = 0;
+	rules->philos[i].last_meal = rules->start_time;
 	rules->philos[i].rules = rules;
 	rules->philos[i].left_fork = &rules->forks[i];
 	if (i == rules->nb_philo - 1)
@@ -56,25 +56,23 @@ int init_philo(t_rules *rules)
     int i;
 
     rules->someone_died = 0;
+    rules->start_time = get_time();
     i = 0;
     while (i < rules->nb_philo)
     {
         if (pthread_mutex_init(&rules->forks[i], NULL) != 0)
-        {
-            printf("Error: mutex init failed for fork %d\n", i);
-			return (0);
-        }
+            return (0);
         i++;
     }
     if (pthread_mutex_init(&rules->print_mutex, NULL) != 0)
-    {
-        printf("Error initializing print mutex\n");
         return (0);
-    }
+
     i = 0;
     while (i < rules->nb_philo)
     {
         setup_philo(rules, i);
+        if (pthread_mutex_init(&rules->philos[i].meal_mutex, NULL) != 0)
+            return (0);
         i++;
     }
     return 1;
@@ -82,18 +80,11 @@ int init_philo(t_rules *rules)
 
 int	main(int argc, char **argv)
 {
-	t_rules	rules;
+	t_rules		rules;
+	pthread_t	death_thread;
 
-	(void)argc;
-	(void)argv;
-
-	// Hardcodeamos los valores para probar
-	rules.nb_philo = 5;
-	rules.time_to_die = 800;
-	rules.time_to_eat = 200;
-	rules.time_to_sleep = 200;
-	rules.must_eat = -1;
-
+	if (!parse_args(argc, argv, &rules))
+		return (1);
 	if (!init_memory(&rules))
 		return (1);
 	if (!init_philo(&rules))
@@ -101,20 +92,18 @@ int	main(int argc, char **argv)
 		free_memory(&rules);
 		return (1);
 	}
-    if (!start_threads(&rules))
-    {
-	free_memory(&rules);
-	return (1);
-    }
-	// Probar salida
-	printf("Initialized %d philosophers:\n", rules.nb_philo);
-	int i = 0;
-	while (i < rules.nb_philo)
+	if (!start_threads(&rules))
 	{
-		pthread_join(rules.philos[i].thread_id, NULL);
-        i++;
+		free_memory(&rules);
+		return (1);
 	}
-	// Liberar recursos
+	if (pthread_create(&death_thread, NULL, death_monitor, &rules) != 0)
+	{
+		printf("Error creando hilo de monitor\n");
+		free_memory(&rules);
+		return (1);
+	}
+	pthread_join(death_thread, NULL);
 	free_memory(&rules);
 	return (0);
 }

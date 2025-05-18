@@ -121,21 +121,38 @@ long	get_time(void)
 	return (time_in_ms);
 }
 
-void    *routine(void *arg)
+void *routine(void *arg)
 {
-    t_philo *philo = (void *)arg;
-    while (1)
+    t_philo *philo = (t_philo *)arg;
+
+    while (!philo->rules->someone_died)
     {
         printf("Philosopher %d is thinking\n", philo->id);
         usleep(1000);
-        pthread_mutex_lock(philo->left_fork);
-        pthread_mutex_lock(philo->right_fork);
+
+        if (philo->id % 2 == 0)
+        {
+            pthread_mutex_lock(philo->right_fork);
+            pthread_mutex_lock(philo->left_fork);
+        }
+        else
+        {
+            pthread_mutex_lock(philo->left_fork);
+            pthread_mutex_lock(philo->right_fork);
+        }
+
         printf("Philosopher %d is eating\n", philo->id);
-        philo->last_meal == get_time();
+
+        pthread_mutex_lock(&philo->meal_mutex);
+        philo->last_meal = get_time();
         philo->meals_eaten++;
+        pthread_mutex_unlock(&philo->meal_mutex);
+
         usleep(philo->rules->time_to_eat * 1000);
+
         pthread_mutex_unlock(philo->left_fork);
         pthread_mutex_unlock(philo->right_fork);
+
         printf("Philosopher %d is sleepin\n", philo->id);
         usleep(philo->rules->time_to_sleep * 1000);
     }
@@ -158,4 +175,34 @@ int start_threads(t_rules * rules)
         i++;
     }
     return 1;
+}
+
+void    *death_monitor(void *arg)
+{
+    t_rules *rules = (t_rules *)arg;
+    int i;
+    long now;
+
+    while (!rules->someone_died)
+    {
+        i = 0;
+        while (i < rules->nb_philo)
+        {
+            pthread_mutex_lock(&rules->philos[i].meal_mutex);
+            now = get_time();
+            if ((now - rules->philos[i].last_meal) > rules->time_to_die)
+            {
+                rules->someone_died = 1;
+                pthread_mutex_unlock(&rules->philos[i].meal_mutex);
+                pthread_mutex_lock(&rules->print_mutex);
+                printf("%ld %d died\n", now -rules->start_time, rules->philos[i].id);
+                pthread_mutex_unlock(&rules->print_mutex);
+                return NULL;
+            }
+            pthread_mutex_unlock(&rules->philos[i].meal_mutex);
+            i++;
+        }
+        usleep(1000);
+    }
+    return NULL;
 }
