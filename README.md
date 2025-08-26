@@ -1,4 +1,4 @@
-# Philosophers (42cursus) – Sin Bonus
+# Philosophers
 
 Este proyecto es una implementación del clásico **problema de los filósofos comensales**, que forma parte del cursus de 42.  
 El objetivo principal es **aprender sobre concurrencia, sincronización y gestión de hilos** utilizando únicamente herramientas básicas del lenguaje C, **sin bonus ni funcionalidades extra**.
