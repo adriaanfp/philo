@@ -81,6 +81,23 @@ int init_philo(t_rules *rules)
     return 1;
 }
 
+static int	init_all(t_rules *rules)
+{
+	if (!init_memory(rules))
+		return (0);
+	if (!init_philo(rules))
+	{
+		free_memory(rules);
+		return (0);
+	}
+	if (!start_threads(rules))
+	{
+		free_memory(rules);
+		return (0);
+	}
+	return (1);
+}
+
 int	main(int argc, char **argv)
 {
 	t_rules		rules;
@@ -88,18 +105,8 @@ int	main(int argc, char **argv)
 
 	if (!parse_args(argc, argv, &rules))
 		return (1);
-	if (!init_memory(&rules))
+	if (!init_all(&rules))
 		return (1);
-	if (!init_philo(&rules))
-	{
-		free_memory(&rules);
-		return (1);
-	}
-	if (!start_threads(&rules))
-	{
-		free_memory(&rules);
-		return (1);
-	}
 	if (pthread_create(&death_thread, NULL, death_monitor, &rules) != 0)
 	{
 		printf("Error creando hilo de monitor\n");
