@@ -64,5 +64,5 @@ int     parse_args(int ac, char **av, t_rules *rules);
 long	get_time(void);
 int		start_threads(t_rules * rules);
 void    *death_monitor(void *arg);
-
+void	*routine(void *arg);
 #endif

@@ -4,7 +4,7 @@ CFLAGS = -Wall -Wextra -Werror -pthread
 
 NAME = philo
 
-SRCS = philo.c philo_utils.c
+SRCS = philo.c philo_utils.c philo_utils2.c atol.c death_monitor.c routine.c
 
 OBJS = $(SRCS:.c=.o)
 
