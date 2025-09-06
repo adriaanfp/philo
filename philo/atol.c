@@ -49,4 +49,3 @@ int	safe_atol(const char *s, int *out)
 		return (0);
 	*out = (int)value;
 	return (1);
-}
