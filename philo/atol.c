@@ -38,15 +38,15 @@ long	ft_atol(const char *str)
 	return (n * sign);
 }
 
-int safe_atol(const char *s, int *out)
+int	safe_atol(const char *s, int *out)
 {
-    long    value;
+	long value;
 
-    if (!is_digit_str(s))
-        return 0;
-    value = ft_atol(s);
-    if (value > INTMAX || value < 0)
-        return 0;
-    *out = (int)value;
-    return 1;
+	if (!is_digit_str(s))
+		return (0);
+	value = ft_atol(s);
+	if (value > INTMAX || value < 0)
+		return (0);
+	*out = (int)value;
+	return (1);
 }
