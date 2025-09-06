@@ -24,15 +24,15 @@ int	ft_isdigit(int c)
 	}
 }
 
-int is_digit_str(const char *s)
+int	is_digit_str(const char *s)
 {
-    if(!s || *s == '\0')
-        return 0;
-    while (*s)
-    {
-        if (!ft_isdigit(*s))
-            return 0;
-        s++;
-    }
-    return 1;
+	if (!s || *s == '\0')
+		return (0);
+	while (*s)
+	{
+		if (!ft_isdigit(*s))
+			return (0);
+		s++;
+	}
+	return (1);
 }
